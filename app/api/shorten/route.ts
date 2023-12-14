@@ -11,6 +11,9 @@ export async function GET(request: Request){
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
         url = `http://${url}`
     }
+    if (!(await doesntExist(slug))){
+        slug = await generateSlug()
+    }
     if (!slug) {
         slug = await generateSlug()
     }
@@ -56,7 +59,7 @@ async function fetch(url: string) {
     return false
 }
 
-async function doesntExist(slug: string) {
+async function doesntExist(slug: string | null) {
     const pbrecords = await pb.collection('urls').getFullList()
     for (let i = 0; i < pbrecords.length; i++) {
         if (pbrecords[i].shortUrlSlug == slug) {
