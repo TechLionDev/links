@@ -26,7 +26,11 @@ export async function GET(request: Request){
         shortUrlSlug: slug
     })
 
-    return Response.json(shortenedUrl)
+    let response = Response.json(shortenedUrl)
+    response.headers.set('Access-Control-Allow-Origin', '*')
+    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
+    response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+    return response
 }
 
 async function generateSlug(){
