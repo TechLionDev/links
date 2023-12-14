@@ -32,15 +32,18 @@ const RedirectURL = ({ params }: PageProps) => {
         (async () => {
             const pbrecords = await pb.collection('urls').getFullList()
             for (let i = 0; i < pbrecords.length; i++) {
+                console.log(pbrecords[i].shortUrlSlug);
+                console.log(slug);
                 if (pbrecords[i].shortUrlSlug == slug) {
-                    setRedirected(true);
                     window.location.href = pbrecords[i].originalUrl;
+                    setRedirected(true);
                     break;
                 }
+                if (!redirected) {
+                    window.location.href = '/status/404';
+                }
             }
-            if (!redirected) {
-                window.location.href = '/status/404';
-            }
+
         })();
     }, []);
     return (
