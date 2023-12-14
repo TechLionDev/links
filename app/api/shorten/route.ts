@@ -5,7 +5,7 @@ const pb = new PocketBase(url)
 
 export async function GET(request: Request){
     const { searchParams } = new URL(request.url)
-    let url = searchParams.get('url')
+    let url = decodeURIComponent(searchParams.get('url') ?? '')
     let slug = searchParams.get('slug')
     if(!url) return Response.json({ error: 'No url provided' })
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
