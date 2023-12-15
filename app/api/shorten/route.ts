@@ -1,11 +1,8 @@
 import PocketBase from 'pocketbase';
-import middleware from '@/app/middleware';
-
 const url = 'https://url-shortener.pockethost.io/'
 const pb = new PocketBase(url)
 
 export async function GET(request: Request){
-    await middleware(request, null, null)
     const { searchParams } = new URL(request.url)
     let url = decodeURIComponent(searchParams.get('url') ?? '')
     let slug = searchParams.get('slug')
