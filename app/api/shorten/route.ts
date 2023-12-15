@@ -2,15 +2,16 @@ import PocketBase from 'pocketbase';
 const url = 'https://url-shortener.pockethost.io/'
 const pb = new PocketBase(url)
 
-export async function GET(request: Request){
+export async function GET(request: Request) {
     const { searchParams } = new URL(request.url)
     let url = decodeURIComponent(searchParams.get('url') ?? '')
     let slug = searchParams.get('slug')
-    if(!url) return Response.json({ error: 'No url provided' })
+    if (!url) return Response.json({ error: 'No url provided' })
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
         url = `http://${url}`
     }
-    if (!(await doesntExist(slug))){
+    url = new URL(url).toString()
+    if (!(await doesntExist(slug))) {
         slug = await generateSlug()
     }
     if (!slug) {
@@ -20,6 +21,7 @@ export async function GET(request: Request){
         let shortenedUrl = await fetch(url)
         return Response.json(shortenedUrl)
     }
+
     let shortenedUrl = await pb.collection('urls').create({
         originalUrl: url,
         shortUrlSlug: slug
@@ -32,14 +34,14 @@ export async function GET(request: Request){
     return response
 }
 
-async function generateSlug(){
+async function generateSlug() {
     let shortUrl;
 
-  do {
-    shortUrl = generateRandomString(4);
-  } while (!(await doesntExist(shortUrl)));
+    do {
+        shortUrl = generateRandomString(4);
+    } while (!(await doesntExist(shortUrl)));
 
-  return shortUrl;
+    return shortUrl;
 }
 
 async function exists(url: string) {
@@ -73,12 +75,12 @@ async function doesntExist(slug: string | null) {
 }
 
 function generateRandomString(length: number) {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
 
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
 
-  return result;
+    return result;
 }
